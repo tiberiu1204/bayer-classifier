@@ -7,7 +7,7 @@ class ArticlesSpider(scrapy.Spider):
     def start_requests(self):
         base_url = "https://www.wowbiz.ro"
         subdirs = ["/exclusiv/", "/video/", "/stiri-actualitate/", "/sport/", "/bani/",
-                   "/stiri-economice/", "/stiri-politica/"]
+                   "/stiri-economie/", "/stiri-politica/"]
         urls = [base_url + subdir for subdir in subdirs]
 
         for url in urls:
@@ -18,8 +18,8 @@ class ArticlesSpider(scrapy.Spider):
         proc_articles = []
         for article in unproc_articles:
             proc_articles.append({
-                "href": article.xpath('//a/@href').get(),
-                "text": article.xpath('//a/div[2]/h2/span/text()').get()
+                "href": article.xpath('a/@href').get(),
+                "text": article.xpath('h2/span/text()').get()
             })
 
         # TODO: Filter
