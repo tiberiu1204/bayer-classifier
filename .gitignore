@@ -1,4 +1,4 @@
-scraper/*.json
+scraper/scraper/spiders/*.json
 venv
 **/__pycache__/
 *.pyc
