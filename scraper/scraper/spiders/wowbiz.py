@@ -38,5 +38,5 @@ class ArticlesSpider(scrapy.Spider):
                 '//*[@id="container"]/div[2]/div/main[2]/div/h2/text() |'
                 '//*[@id="container"]/div[2]/div/main[2]/div/p/text() |'
                 '//*[@id="container"]/div[2]/div/main[2]/div/em/text()'
-            ).re(r'\w+')
+            ).re(r'[\w-]+')
         }

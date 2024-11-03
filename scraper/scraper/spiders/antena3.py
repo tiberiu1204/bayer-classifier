@@ -42,5 +42,5 @@ class ArticlesSpider(scrapy.Spider):
             "title": response.meta.get('title'),
             "text": response.xpath(
                 '//div[contains(@class, "text")]//p//text()'
-            ).re(r'\w+')
+            ).re(r'[\w-]+')
         }
