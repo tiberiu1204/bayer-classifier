@@ -21,15 +21,13 @@ class ArticlesSpider(scrapy.Spider):
             for page_num in range(2, NUM_PAGES + 1):
                 href = f'{response.url}pagina-{page_num}'
                 yield response.follow(href, callback=self.parse_pages)
-        titles = response.xpath('//article/h2/a')
+        titles = response.xpath('//article//a')
         article_arr = []
         for title in titles:
             article_arr.append({
                 "href": title.xpath('@href').get(),
                 "title": title.xpath('text()').get()
             })
-
-        # TODO: Filter
 
         for article in article_arr:
             yield response.follow(article["href"],

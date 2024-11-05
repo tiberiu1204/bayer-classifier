@@ -9,6 +9,8 @@ from collections import Counter
 import copy
 
 FILES = ["antena3.json", "wowbiz.json", "pressone.json"]
+SERIOUS = ["pressone.json"]
+TABLOID = ["wowbiz"]
 PROJECT_ROOT = f"{os.getcwd()}/.."
 CRAWLER_DIR = f"{PROJECT_ROOT}/scraper"
 CLASSIFIER_DIR = os.getcwd()
@@ -18,7 +20,7 @@ class Classifier:
     def __init__(self):
         self._check_if_files_exist(FILES)
         self.data = self._load_json(FILES)
-        self._analize_freq()
+        self._get_words_sets()
     """
     Check if required json files containing necessary data are present in
     current directory.
@@ -59,15 +61,16 @@ class Classifier:
                 data[file] = json.load(f)
         return data
 
-    def _analize_freq(self) -> dict:
-        self.freq_dict_per_article = copy.deepcopy(self.data)
-        self.freq_dict = {}
-        for file_name, data_point in self.freq_dict_per_article.items():
-            dicts = []
+    def _get_words_sets(self) -> dict:
+        self.words_set = copy.deepcopy(self.data)
+        self.words_set_union = {}
+        for file_name, data_point in self.words_set.items():
+            sets = []
             for article in data_point:
-                article["text"] = Counter(article["text"])
-                dicts.append(article["text"])
-            self.freq_dict[file_name] = sum(dicts, Counter())
+                article["text"] = set(article["text"])
+                sets.append(article["text"])
+            self.words_set_union[file_name] = set.union(*sets)
+        print(self.words_set_union)
 
 
 classifier = Classifier()
