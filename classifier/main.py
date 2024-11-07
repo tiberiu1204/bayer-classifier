@@ -61,6 +61,7 @@ class Classifier:
             thread.join()
 
     def _load_json(self, files: List[str]) -> dict:
+        os.chdir(CLASSIFIER_DIR)
         print("[INFO] Loading jsons...")
         data = {}
         for file in files:
