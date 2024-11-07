@@ -20,6 +20,8 @@ class Classifier:
     word_sets_union = {}
     freq = {}
     freq_categories = {}
+    tabloid_words = []
+    words_by_category = {}
 
     def __init__(self):
         self._check_if_files_exist(FILES)
@@ -28,6 +30,8 @@ class Classifier:
         self._calculate_frequencies_websites()
         self._calculate_frequencies_categories()
         self._compute_words_for_tabloid_classifier()
+        self._compute_words_for_category_classifier()
+
     """
     Check if required json files containing necessary data are present in
     current directory.
@@ -130,8 +134,24 @@ class Classifier:
 
         filtered_words = tabloid_words[diff > difference]
 
-        print(filtered_words)
-        return list(filtered_words)
+        self.tabloid_words = filtered_words
+
+    def _compute_words_for_category_classifier(self, difference=20, min_percentage=5) -> dict:
+        print("[INFO] Finding words to consider for category classifier...")
+        for category, freq_dict in self.freq_categories.items():
+            curr_cat_freqs = np.array(list(freq_dict.values()))
+            curr_cat_words = np.array(list(freq_dict.keys()))
+            for category2, freq_dict2 in self.freq_categories.items():
+                if category == category2:
+                    continue
+                cat2_freqs = np.array(
+                    [freq_dict2.get(word, -difference + min_percentage) for word in curr_cat_words])
+                diff = curr_cat_freqs - cat2_freqs
+                filtered_words = curr_cat_words[diff > difference]
+                self.words_by_category[category] = {}
+                self.words_by_category[category][category2] = [
+                    str(x) for x in list(filtered_words)]
+        print(self.words_by_category)
 
 
 classifier = Classifier()
