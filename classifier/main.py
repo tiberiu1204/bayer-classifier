@@ -8,7 +8,7 @@ import json
 from collections import Counter
 import copy
 
-FILES = ["antena3.json", "wowbiz.json", "pressone.json"]
+FILES = ["antena3.json", "wowbiz.json", "pressone.json", "recorder.json"]
 SERIOUS = ["pressone.json"]
 TABLOID = ["wowbiz"]
 PROJECT_ROOT = f"{os.getcwd()}/.."
