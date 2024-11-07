@@ -20,4 +20,14 @@ help combat this: a bayesian classifier to help you get rid of those pesky sensa
 regular, fair news (altough sadly they become less regular being replaced by the aforementioned brain rot).
 
 # Short rundown of our implementation
+## How do we compute the final guesses?
+Well we programmers are ~~stupid~~ lazy, and given that, we do not ~~know~~ care whether our features are independent, and we
+just naively assume that they are, in our naive Bayes classifier (pun intended).
+
+And so, to the best of our knowledge:
+
+`P(A | B, C, D ...) = P(B | A, C | A, D | A ...) * P(A) / P(B, C, D ...)`
+
+(we do our best but it's not easy to be a 🚀 programmer 🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 ok one more 🚀)
+
 # TODO

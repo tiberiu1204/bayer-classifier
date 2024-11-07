@@ -14,6 +14,54 @@ PROJECT_ROOT = f"{os.getcwd()}/.."
 CRAWLER_DIR = f"{PROJECT_ROOT}/scraper"
 CLASSIFIER_DIR = os.getcwd()
 
+clase = {
+    'guvid' : 1/100,
+    'sanatos al dreacu': 99/100
+}
+prob_test = {
+    'guvid': {
+        '+': 95/100,
+        '-': 5/100,
+        'simptome nasoale': 0.11
+    },
+    'sanatos al dreacu': {
+        '+': 2/100,
+        '-': 98/100,
+        'simptome nasoale': 0.1
+    }
+}
+
+
+
+#                                                     ↙ just list features into the function call
+def naive_bayes_infer(Ps_of_classes, Ps_of_features, features): # < features is the article, split into words, as an array
+    #                 ^ obvious,     ^ dict['class'] = dict2, where dict2['feature'] = P(feature | class)
+    #                   dict['class'] = P(class)
+    # given that denoinator is literally the exact same (P(features)) there's no sense in dividing anything
+
+    Ps_of_classes_values = np.array(list(Ps_of_classes.values()))
+    multipliers = []
+
+    def calculate_multiplier(class_):
+        class_features = Ps_of_features[class_]
+        Ps_of_relevant_features = [value for feature, value in class_features.items() if feature in features]
+        return np.prod(Ps_of_relevant_features) if Ps_of_relevant_features else 0
+
+    # using ThreadPoolExecutor to parallelize the computation
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor() as executor:
+        multipliers = list(executor.map(calculate_multiplier, Ps_of_classes))
+
+    multipliers = np.array(multipliers)
+    print(multipliers)
+    result = Ps_of_classes_values * multipliers
+    result_dict = dict(zip(Ps_of_classes.keys(), result))
+    print(result_dict)
+    max_value = max(result_dict.values())
+    max_classes = [class_ for class_, value in result_dict.items() if value == max_value]
+    print(max_classes)
+    return max_classes
+
 
 class Classifier:
     word_sets = {}
@@ -153,5 +201,5 @@ class Classifier:
                     str(x) for x in list(filtered_words)]
         print(self.words_by_category)
 
-
+naive_bayes_infer(clase, prob_test, ['+',  'simptome nasoale'])
 classifier = Classifier()
