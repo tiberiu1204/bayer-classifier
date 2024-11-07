@@ -24,7 +24,7 @@ class ArticlesSpider(scrapy.Spider):
         last = response.url.strip('/').split('/')[-1]
         if last in base:
             for page_num in range(2, NUM_PAGES + 1):
-                href = f'{response.url.strip('/')}/{page_num}'
+                href = f"{response.url.strip('/')}/{page_num}"
                 yield response.follow(href, callback=self.parse_pages)
         else:
             last = response.url.strip('/').split('/')[-2]
