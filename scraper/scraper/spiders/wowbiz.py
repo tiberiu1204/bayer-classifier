@@ -23,8 +23,6 @@ class ArticlesSpider(scrapy.Spider):
                 "title": article.xpath('.//h2/span/text()').re(r'[A-Z][\w ,.;:\'\'\"\"\-\!\?]+')
             })
 
-        # TODO: Filter
-
         for article in proc_articles:
             yield response.follow(article["href"],
                                   callback=self.parse_articles,

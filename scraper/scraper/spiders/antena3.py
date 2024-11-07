@@ -16,11 +16,16 @@ class ArticlesSpider(scrapy.Spider):
     def parse_pages(self, response):
         NUM_PAGES = 5
         base = ["externe", "politica", "actualitate", "life", "sport"]
-        last = response.url.split('/')[-2]
+        category = {"externe": "politica", "politica": "politica",
+                    "actialitate": "diverse", "life": "diverse", "sport": "sport"}
+        last = response.url.strip('/').split('/')[-1]
         if last in base:
             for page_num in range(2, NUM_PAGES + 1):
                 href = f'{response.url}pagina-{page_num}'
                 yield response.follow(href, callback=self.parse_pages)
+        else:
+            last = response.url.strip('/').split('/')[-2]
+
         titles = response.xpath('//article//a')
         article_arr = []
         for title in titles:
@@ -32,12 +37,13 @@ class ArticlesSpider(scrapy.Spider):
         for article in article_arr:
             yield response.follow(article["href"],
                                   callback=self.parse_articles,
-                                  meta={"title": article["title"]})
+                                  meta={"title": article["title"], "category": category[last]})
         print(f'Scraped {len(article_arr)} articles from {response.url}')
 
     def parse_articles(self, response):
         yield {
             "title": response.meta.get('title'),
+            "category": response.meta.get('category'),
             "text": response.xpath(
                 '//div[contains(@class, "text")]//p//text()'
             ).re(r'[\w-]+')
