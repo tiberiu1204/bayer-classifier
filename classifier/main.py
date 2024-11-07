@@ -9,8 +9,7 @@ from collections import Counter
 import copy
 
 FILES = ["antena3.json", "wowbiz.json", "pressone.json", "recorder.json"]
-SERIOUS = ["pressone.json"]
-TABLOID = ["wowbiz"]
+TABLOID = ["wowbiz.json"]
 PROJECT_ROOT = f"{os.getcwd()}/.."
 CRAWLER_DIR = f"{PROJECT_ROOT}/scraper"
 CLASSIFIER_DIR = os.getcwd()
@@ -20,12 +19,15 @@ class Classifier:
     word_sets = {}
     word_sets_union = {}
     freq = {}
+    freq_categories = {}
 
     def __init__(self):
         self._check_if_files_exist(FILES)
         self.data = self._load_json(FILES)
         self._get_words_sets()
-        self._calculate_frequencies()
+        self._calculate_frequencies_websites()
+        self._calculate_frequencies_categories()
+        self._compute_words_for_tabloid_classifier()
     """
     Check if required json files containing necessary data are present in
     current directory.
@@ -76,22 +78,60 @@ class Classifier:
         for file_name, data_point in self.word_sets.items():
             sets = []
             for article in data_point:
-                article["text"] = set(article["text"])
+                article["text"] = set(map(str.lower, article["text"]))
                 sets.append(article["text"])
             self.word_sets_union[file_name] = set.union(*sets)
 
-    def _calculate_frequencies(self) -> dict:
-        print("[INFO] Calculating frequencies...")
+    def _calculate_frequencies_websites(self) -> dict:
+        print("[INFO] Calculating frequencies for websites...")
         for file_name, article_arr in self.word_sets.items():
-            self.freq[file_name] = Counter()
+            category = "tabloid" if file_name in TABLOID else "serious"
+            self.freq[category] = Counter()
             for article in article_arr:
-                self.freq[file_name] = self.freq[file_name] + \
+                self.freq[category] = self.freq[category] + \
                     Counter(article["text"])
-            self.freq[file_name] = dict(sorted(
-                ((key, percentage) for key, value in self.freq[file_name].items()
+        for category in self.freq:
+            self.freq[category] = dict(sorted(
+                ((key, percentage) for key, value in self.freq[category].items()
                  if (percentage := round(float(value) / len(article_arr) * 100, 2))),
                 key=lambda item: item[1], reverse=True
             ))
+
+    def _calculate_frequencies_categories(self) -> dict:
+        print("[INFO] Calculating frequencies for categories...")
+        art_per_cat = {}
+        for file_name, article_arr in self.word_sets.items():
+            for article in article_arr:
+                text = article["text"]
+                category = article["category"]
+                if category not in self.freq_categories:
+                    art_per_cat[category] = 1
+                    self.freq_categories[category] = Counter()
+                else:
+                    art_per_cat[category] += 1
+                    self.freq_categories[category] += Counter(text)
+        for category in self.freq_categories:
+            self.freq_categories[category] = dict(sorted(
+                ((key, percentage) for key, value in self.freq_categories[category].items() if (
+                    percentage := round(float(value) / art_per_cat[category] * 100, 2))),
+                key=lambda item: item[1], reverse=True))
+
+    def _compute_words_for_tabloid_classifier(self, difference=10, min_percentage=2) -> list:
+        print("[INFO] Finding words to consider for tabloid/serious classifier...")
+        word_arr = np.empty(0)
+        for tabloid in TABLOID:
+            np.append(word_arr, self.freq["tabloid"])
+        tabloid_freqs = np.array(list(self.freq["tabloid"].values()))
+        serious_freqs = np.array([self.freq["serious"].get(
+            word, -difference + min_percentage) for word in self.freq["tabloid"]])
+        diff = tabloid_freqs - serious_freqs
+
+        tabloid_words = np.array(list(self.freq["tabloid"].keys()))
+
+        filtered_words = tabloid_words[diff > difference]
+
+        print(filtered_words)
+        return list(filtered_words)
 
 
 classifier = Classifier()
