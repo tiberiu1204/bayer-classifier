@@ -35,13 +35,13 @@ class ArticlesSpider(scrapy.Spider):
         for article in proc_articles:
             yield response.follow(article["href"],
                                   callback=self.parse_articles,
-                                  meta={"title": article["title"]})
+                                  meta={"title": article["title"], "category": "politica"})
         print(f'Scraped {len(proc_articles)} articles from {response.url}')
 
     def parse_articles(self, response):
         yield {
             "title": response.meta.get("title"),
-            "category": "politica",
+            "category": response.meta.get('category'),
             "text": response.xpath(
                 "//*[starts-with(@id, 'post-') and translate(substring-after(@id, 'post-'), '0123456789', '') = '']/div/h2/text() | "
                 "//*[starts-with(@id, 'post-') and translate(substring-after(@id, 'post-'), '0123456789', '') = '']/div/p/text()"

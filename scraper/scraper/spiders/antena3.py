@@ -17,7 +17,7 @@ class ArticlesSpider(scrapy.Spider):
         NUM_PAGES = 5
         base = ["externe", "politica", "actualitate", "life", "sport"]
         category = {"externe": "politica", "politica": "politica",
-                    "actialitate": "diverse", "life": "diverse", "sport": "sport"}
+                    "actualitate": "diverse", "life": "diverse", "sport": "sport"}
         last = response.url.strip('/').split('/')[-1]
         if last in base:
             for page_num in range(2, NUM_PAGES + 1):
