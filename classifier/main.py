@@ -59,11 +59,6 @@ class Classifier:
         Ps_of_classes_values = np.array(list(Ps_of_classes.values()))
         multipliers = []
 
-        def normalize_to_probabilities(values):
-            exp_values = np.exp(values - np.max(values))
-            probabilities = exp_values / np.sum(exp_values)
-            return probabilities
-
         def calculate_multiplier(class_):
             class_features = Ps_of_features[class_]
             Ps_of_relevant_features = [value for feature, value in class_features.items() if feature in features]
@@ -74,8 +69,13 @@ class Classifier:
         with ThreadPoolExecutor() as executor:
             multipliers = list(executor.map(calculate_multiplier, Ps_of_classes.keys()))
 
+        def normalize_to_probabilities(values):
+            exp_values = np.exp(values - np.max(values))
+            probabilities = exp_values / np.sum(exp_values)
+            return probabilities
+
         multipliers = np.array(multipliers)
-        result = normalize_to_probabilities(np.log(Ps_of_classes_values) + multipliers)
+        result = normalize_to_probabilities(-1 * np.log(Ps_of_classes_values) + -1 * multipliers)
         result_dict = dict(zip(Ps_of_classes.keys(), result))
         print("The probability of belonging to each class are: ", result_dict)
         max_value = max(result_dict.values())
