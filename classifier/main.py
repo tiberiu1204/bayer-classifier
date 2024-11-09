@@ -55,7 +55,6 @@ class Classifier:
         # given that denoinator is literally the exact same (P(features)) there's no sense in dividing anything
 
         Ps_of_classes_values = np.array(list(Ps_of_classes.values()))
-        print(Ps_of_classes_values)
         multipliers = []
 
         def calculate_multiplier(class_):
@@ -69,13 +68,12 @@ class Classifier:
             multipliers = list(executor.map(calculate_multiplier, Ps_of_classes))
 
         multipliers = np.array(multipliers)
-        print(multipliers)
         result = Ps_of_classes_values * multipliers
         result_dict = dict(zip(Ps_of_classes.keys(), result))
-        print(result_dict)
+        print("The probability of belonging to each class are: ", result_dict)
         max_value = max(result_dict.values())
         max_classes = [class_ for class_, value in result_dict.items() if value == max_value]
-        print(max_classes)
+        print("The article may be from: ", max_classes)
         return max_classes
 
     def _check_if_files_exist(self, files: List[str]) -> None:
@@ -200,6 +198,6 @@ class Classifier:
 classifier = Classifier()
 
 article = transform_to_classifier_fmt('Cei cinci minori acuzați că au violat o adolescentă de 15 ani - cu toții protagoniști ai unui scandal deja celebru din Constanța - au fost arestați preventiv de magistrații constănțeni. Odată cu ei, după gratii a ajuns și un tânăr, care s-a recomandat ca fiind vărul unuia dintre suspecți, pentru șantaj. Procurorii Parchetului de pe lângă Judecătoria Constanța, în atenția cărora se află dosarul, au menționat, în referatul de arestare preventivă următoarele, cu privire la derularea evenimentelor: "În noaptea de 14 spre 15 decembrie 2013, profitând de starea tinerei Roxana B. și de imposibilitatea acesteia de a-și exprima consimțământul, cei cinci inculpați minori au condus-o pe partea vătămată la locuința unuia dintre ei, lipsind-o de libertate". Aici, spun anchetatorii, inculpații Dan Cristian I. și Severius Alexandru V. au întreținut raporturi sexuale cu partea vătămată, contrar voinței acesteia, fiind încurajați și susținuți fizic de inculpatul Cristian Floris G.; ulterior, în aceeași noapte, inculpații au condus-o pe partea vătămată la locuința sa, unde au intrat fără acord, context în care inculpatul Cristian Floris G. a întreținut raporturi sexuale cu minora, "fiind susținut moral și fizic de ceilalți patru inculpați", se arată în referatul de arestare preventivă întocmit de procurori. Cât privește acuzațiile ce le sunt aduse, procurorii au menționat: Cristian Floris G. și Severius Alexandru V. sunt acuzați de viol, complicitate la viol, lipsire de libertate în mod ilegal și violare de domiciliu; Dan Cristian I. este acuzat de viol (două acte), lipsire de libertate în mod ilegal și violare de domiciliu; Sever Tekin A. și Flavius Evelin Vasile Ș. sunt acuzați de complicitate la viol (câte două acte materiale), lipsire de libertate în mod ilegal și violare de domiciliu. Anchetatorii au mai precizat că, după comiterea faptelor, în perioada 15 - 22 decembrie, inculpatul Răzvan Cladiu S. (cel care s-a recomandat ca fiind vărul lui Severius Alexandru V.), prin intermediul unor postări pe o rețea de socializare i-a amenințat pe inculpații Dan Cristian I. și Cristian Floris G. cu acte de violență fizică și psihică, în cazul în care aceștia nu-și vor asuma exclusiv vinovăția faptelor, cu scopul de a-l exonera de răspundere pe cel despre care spunea că este vărul lui. Pentru acesta, este acuzat de două infracțiuni de șantaj. Vineri dimineață, cei șase suspecți au fost duși în fața instanței de judecată, magistrații dispunând arestarea lor, astfel: Cristian Floris G. pe o durată de 19 zile, Dan Cristian I., Severius Alexandru V., Sever Tekin A. și Flavius Evelin Vasile Ș., pentru 14 zile și patru ore, iar Răzvan Claudiu S., pentru 29 de zile. Menționăm că și la nivelul Inspectoratului Județean Școlar Constanța au fost luate măsuri în privința unora dintre elevii implicați în scandalul sexual. Astfel, doi dintre elevi au fost propuși spre mutarea disciplinară. "Facem precizarea că punerea în mișcare a acțiunii penale este o etapă a procesului penal reglementată de Codul de procedură penală, necesară în vederea propunerii unor măsuri preventive, activitate care nu poate, în nicio situație, să înfrângă principiul prezumției de nevinovăție", au subliniat anchetatorii din cadrul Parchetului de pe lângă Judecătoria Constanța. ')
-print(article)
+print(classifier.total_art)
 classifier.naive_bayes_infer(classifier.Ps_cat, classifier.freq_categories, article)
 classifier.naive_bayes_infer(classifier.Ps_goodbad, classifier.freq, article)
