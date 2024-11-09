@@ -44,6 +44,11 @@ to compute `multipliers`. We call a multiplier the numerator of the above fracti
 compute those as the denominator is the same for the probability of beloning to each class, so we are only interested in how
 those multipliers compare, not in the exact values, saving precious computation time.
 
+Because multiplying togheter values < 1 a lot of times in a row can result in massive float underflows (exponent < -2200)
+and thus crashing into 0, and getting nothing of use, we use a smart trick: take the log of the values and sum it. Now we
+mantain proportionality without going over data type limits. After that, we use softmax to normalize everything into a probability
+distribution.
+
 After that, we get the maximum and see what class has it, or if there are multiple, what clasess have it, that meaning the 
 result can equally belong to the classes listed. We print those nicely.
 
