@@ -67,5 +67,5 @@ To wrap up this subsection about ~~stealing~~ data, we basically got 1773 articl
 (we considered Antena 3 and Wowbiz as tabloids, and Recorder and Pressone as serious sources), and separately split into
 sports, politics and other news in a 14 to 51 to 34 -ish ratio.
 
-We then took 100 of those as a test set and used the others for training data.
+We then took 10% of those as a test set and used the others for training data.
 
