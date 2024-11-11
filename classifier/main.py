@@ -31,9 +31,7 @@ class Classifier:
         self._calculate_frequencies_categories()
 
     #                                                          ↙ just list features into the function call
-    # < features is the article, split into words, as an array
-
-    def naive_bayes_infer(self, Ps_of_classes, Ps_of_features, features):
+    def naive_bayes_infer(self, Ps_of_classes, Ps_of_features, features): # < features is the article, split into words, as an array
         #                       ^ obvious,     ^ dict['class'] = dict2, where dict2['feature'] = P(feature | class)
         #                   dict['class'] = P(class)
         # given that denoinator is literally the exact same (P(features)) there's no sense in dividing anything
@@ -216,6 +214,16 @@ class Classifier:
                     probability := round(float(value) / art_per_cat[category], 2))),
                 key=lambda item: item[1], reverse=True))
 
+
+    """
+    Runs tests and prints results.
+
+    Parameters:
+        None
+
+    Returns: None
+
+    """
     def test(self):
         passed_tests = 0
         total_tests = 0
