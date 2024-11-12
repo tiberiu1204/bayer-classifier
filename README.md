@@ -2,6 +2,8 @@
 ```
 git clone https://github.com/tiberiu1204/bayer-classifier.git
 cd bayer-classifier
+python -m venv venv (optional but recommended)
+source ./venv/bin/activate (optional but recommended)
 pip install -r requirements.txt
 python classifier/main.py
 ```
