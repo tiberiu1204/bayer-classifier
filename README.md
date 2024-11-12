@@ -1,3 +1,10 @@
+# Usage
+```
+git clone https://github.com/tiberiu1204/bayer-classifier.git
+cd bayer-classifier
+pip install -r requirements.txt
+python classifier/main.py
+```
 # Introduction
 With the spread of communication technology there arised a multitude of new ways to spread and consume information online.
 One such form are online news websites, promising to share just the real, objective facts on matters of interest for the 
